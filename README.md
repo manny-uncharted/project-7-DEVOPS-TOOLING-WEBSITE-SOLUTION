@@ -72,7 +72,7 @@ In this step, we would prepare the Network File system server.
     Results:
     ![image](img/pvs.png)
 
-- Now we need to create a volume group using the vgcreate utility. We will use the 3 disks we created earlier to create a volume group called nfs-vg.
+- Now we need to create a volume group using the vgcreate utility. We will use the 3 disks we created earlier to create a volume group called NFS-vg.
     ```
     sudo vgcreate nfs-vg /dev/nvme1n1 /dev/nvme2n1 /dev/nvme3n1
     ```
