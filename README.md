@@ -102,8 +102,8 @@ In this step, we would prepare the Network File system server.
     ```
     Results:
     ![image](img/vgdisplay.png)
-    ![image](img/lsblk2.png)
-
+    ![image]
+    
 - Use mkfs.xfs to format the logical volumes with xfs filesystem.
     ```
     sudo mkfs -t xfs /dev/nfs-vg/lv-opt
@@ -167,7 +167,7 @@ In this step, we would prepare the Network File system server.
     Results:
     ![image](img/yum2.png)
 
-- Now we need to set up permissions that will allow our webservers to read, write and execute files on NFS:
+- Now we need to set up permissions that will allow our web servers to read, write and execute files on NFS:
     ```
     sudo chown -R nobody: /mnt/apps
     sudo chown -R nobody: /mnt/logs
@@ -196,3 +196,10 @@ In this step, we would prepare the Network File system server.
     Results:
     ![image](img/nano2.png)
     ![image](img/exportfs.png)
+
+- Now we need to check the port being used by NFS and open it using Security Groups(add a new inbound Rule):
+    ```
+    rpcinfo -p | grep nfs
+    ```
+    Results:
+    ![image](img/rpcinfo.png)
