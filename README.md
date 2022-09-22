@@ -339,4 +339,99 @@ In this step, we would prepare the Network File system server.
 
 - Repeat the previous step for another 2 Web Servers.
 
-- 
+- To verify that Apache files and directories are available on the Web Server in /var/www and also on the NFS server in /mnt/apps. If you see the same files – it means NFS is mounted correctly. You can try to create a new file touch test.txt from one server and check if the same file is accessible from other Web Servers.
+    ```
+    sudo touch test.txt
+    ```
+    Results:
+    ![image](img/touch.png)
+    and on the other web servers:
+    ![image](img/touch2.png)
+
+- Now we need to locate the log folder for Apache on the web server and mount it to the NFS server's export for logs and make sure that the changes will persist on the web server after reboot on all the web servers.
+    ```
+    sudo mount -t nfs -o rw, nosuid <NFS-Server-IP>:/mnt/logs /var/log/httpd
+    ```
+    and add the following to /etc/fstab:
+    ```
+    <NFS-Server-IP>:/mnt/logs /var/log/httpd nfs defaults 0 0
+    ```
+    Results:
+    ![image](img/nano4.png)
+
+    ```
+    sudo mkdir /var/log/httpd
+    sudo mount -t nfs -o rw, nosuid <NFS-Server-IP>:/mnt/logs /var/log/httpd
+    ```
+    Results:
+    ![image](img/mkdir3.png)
+
+    ```
+    sudo nano /etc/fstab
+    ```
+    add the following:
+    ```
+    <NFS-Server-IP>:/mnt/logs /var/log/httpd nfs defaults 0 0
+    ```
+    Results:
+    ![image](img/nano5.png)
+    ![image](img/nano6.png)
+
+- Now we need to install git on any of the web servers.
+    ```
+    sudo yum install git
+    ```
+    Results:
+    ![image](img/yum10.png)
+
+- Now we need to clone the repository from GitHub to the web server.
+    ```
+    git clone https://github.com/manny-uncharted/tooling.git
+    ```
+    Results:
+    ![image](img/git.png)
+
+- And now we need to copy the files from the html folder in the repository to the /var/www/html directory.
+    ```
+    cd tooling
+    sudo cp -r html/* /var/www/html/
+    ```
+    and to verify that the files were copied successfully:
+    ```
+    sudo ls /var/www/html/
+    ```
+    Results:
+    ![image](img/cp.png)
+    ![image](img/ls.png)
+
+Note: If you encounter 403 Error – check permissions to your /var/www/html folder and also disable SELinux sudo setenforce 0. To make this change permanent – open following config file sudo nano /etc/sysconfig/selinux and set SELINUX=disabledthen restrt httpd.
+
+
+- Now we need to update the website’s configuration to connect to the database (in /var/www/html/functions.php file). 
+    ```
+    sudo nano /var/www/html/functions.php
+    ```
+    Results:
+    ![image](img/nano7.png)
+
+- Then we apply tooling-db.sql script to your database using this command:
+    ```
+    sudo yum install mysql -y
+    mysql -h <private-ip-of-db> -u webaccess -p tooling < tooling-db.sql
+    ```
+    Note: Ensure that you edit the /etc/mysql/mysql.conf.d/mysqld.cnf file to allow remote access to the database.
+
+    Results:
+    ![image](img/mysql8.png)
+
+- Now we need to create in MySQL a new admin user with username: myuser and password: password:
+    ```
+    INSERT INTO users (‘id’, ‘username’, ‘password’, ’email’, ‘user_type’, ‘status’) VALUES
+    (2, ‘myuser’, ‘5f4dcc3b5aa765d61d8327deb882cf99’, ‘user@mail.com’, ‘admin’, 1);
+    ```
+    Results:
+    ![image](img/mysql9.png)
+
+- Now we can then open the website in the browser and login with the new user.
+    Results:
+    ![image](img/login.png)
