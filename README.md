@@ -350,22 +350,12 @@ In this step, we would prepare the Network File system server.
 
 - Now we need to locate the log folder for Apache on the web server and mount it to the NFS server's export for logs and make sure that the changes will persist on the web server after reboot on all the web servers.
     ```
-    sudo mount -t nfs -o rw, nosuid <NFS-Server-IP>:/mnt/logs /var/log/httpd
-    ```
-    and add the following to /etc/fstab:
-    ```
-    <NFS-Server-IP>:/mnt/logs /var/log/httpd nfs defaults 0 0
-    ```
-    Results:
-    ![image](img/nano4.png)
-
-    ```
     sudo mkdir /var/log/httpd
     sudo mount -t nfs -o rw, nosuid <NFS-Server-IP>:/mnt/logs /var/log/httpd
     ```
-    Results:
-    ![image](img/mkdir3.png)
-
+    <!-- Results:
+    ![image](img/mkdir3.png) -->
+    and then add the following to /etc/fstab:
     ```
     sudo nano /etc/fstab
     ```
