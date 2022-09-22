@@ -5,7 +5,7 @@ In this project, we would learn how to build a DevOps tooling website.
 - [Introduction](#introduction)
 - [Step1](#Step 1 - Prepare NFS Server)
 - [Step2](#Step 2 - Configure the database server)
-- 
+- [Step3](#Step 3 - Configure the web servers)
 
 
 
@@ -209,9 +209,134 @@ In this step, we would prepare the Network File system server.
 
 
 ### Step 2: - Configure the database server
-- Create a new instance of RHEL 8.2 and ssh into it.
+- Create a new instance of ubuntu and ssh into it.
     ```
-    ssh -i "key.pem" ec2-user@<IP>
+    ssh -i "key.pem" ubuntu@<IP>
     ```
     Results:
     ![image](img/ssh.png)
+
+- Install the MySQL server using the following command:
+    ```
+    sudo apt install mysql-server
+    ```
+    Results:
+    ![image](img/mysql.png)
+    
+- Create a database name called tooling
+    ```
+    sudo mysql
+    CREATE DATABASE tooling;
+    ```
+    Results:
+    ![image](img/mysql2.png)
+
+- Create a database user and name it webaccess
+    ```
+    CREATE USER 'webaccess'@'%' IDENTIFIED BY 'password';
+    ```
+    Results:
+    ![image](img/mysql3.png)
+    Note: The '%' should be replaced with the address of the subnet CIDR of your webservers.
+
+- Grant the webaccess user all privileges on the tooling database.
+    ```
+    GRANT ALL PRIVILEGES ON tooling.* TO 'webaccess'@'%';
+    ```
+    Results:
+    ![image](img/mysql4.png)
+
+- Now we need to flush all privileges.
+    ```
+    FLUSH PRIVILEGES;
+    ```
+    Results:
+    ![image](img/mysql5.png)
+
+- Now let's show our databases and users.
+    ```
+    SHOW DATABASES;
+    ```
+    Results:
+    ![image](img/mysql6.png)
+
+- Now let's navigate to the tooling database and show tables.
+    ```
+    USE tooling;
+    SHOW TABLES;
+    ```
+    Results:
+    ![image](img/mysql7.png)
+
+
+
+### Step 3: - Configure the web servers
+- Create a new instance of RedHat and ssh into it.
+    ```
+    ssh -i "key.pem" redhat@<IP>
+    ```
+
+- Install NFS client using the following command:
+    ```
+    sudo yum install -y nfs-utils nfs4-acl-tools
+    ```
+    Results:
+    ![image](img/yum3.png)
+
+- Create a directory called /var/www/ and target the NFS server's export for apps
+    ```
+    sudo mkdir /var/www
+    sudo mount -t nfs -o rw, nosuid <NFS-Server-IP>:/mnt/apps /var/www
+    ```
+    Results:
+    ![image](img/mkdir2.png)
+
+- Verify that NFS was mounted successfully.
+    ```
+    sudo df -h
+    ```
+    Results:
+    ![image](img/df2.png)
+
+- Make sure that the changes will persist on the web server after reboot.
+    ```
+    sudo nano /etc/fstab
+    ```
+    add the following:
+    ```
+    <NFS-Server-IP>:/mnt/apps /var/www nfs defaults 0 0
+    ```
+    Results:
+    ![image](img/nano3.png)
+
+- Install Remi's repository, Apache and PHP
+    ```
+    sudo yum install httpd -y
+    sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+
+    sudo dnf install dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm
+
+    sudo dnf module reset php
+
+    sudo dnf module enable php:remi-7.4
+
+    sudo dnf install php php-opcache php-gd php-curl php-mysqlnd
+
+    sudo systemctl start php-fpm
+
+    sudo systemctl enable php-fpm
+
+    setsebool -P httpd_execmem 1
+    ```
+    Results:
+    ![image](img/yum4.png)
+    ![image](img/yum5.png)
+    ![image](img/yum6.png)
+    ![image](img/yum7.png)
+    ![image](img/yum8.png)
+    ![image](img/yum9.png)
+    ![image](img/setsebool.png)
+
+- Repeat the previous step for another 2 Web Servers.
+
+- 
