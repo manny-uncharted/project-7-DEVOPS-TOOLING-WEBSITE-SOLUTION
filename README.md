@@ -4,7 +4,8 @@ In this project, we would learn how to build a DevOps tooling website.
 ## Table of Contents
 - [Introduction](#introduction)
 - [Step1](#Step 1 - Prepare NFS Server)
-- [Step2](#Step 1 - Prepare NFS Server)
+- [Step2](#Step 2 - Configure the database server)
+- 
 
 
 
@@ -203,3 +204,14 @@ In this step, we would prepare the Network File system server.
     ```
     Results:
     ![image](img/rpcinfo.png)
+
+    Note: For the NFS server to be accessible from your client, you must also open the following ports: TCP 111, UDP 111, and UDP 2049.
+
+
+### Step 2: - Configure the database server
+- Create a new instance of RHEL 8.2 and ssh into it.
+    ```
+    ssh -i "key.pem" ec2-user@<IP>
+    ```
+    Results:
+    ![image](img/ssh.png)
