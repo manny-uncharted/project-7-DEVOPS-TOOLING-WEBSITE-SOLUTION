@@ -286,7 +286,7 @@ In this step, we would prepare the Network File system server.
 - Create a directory called /var/www/ and target the NFS server's export for apps
     ```
     sudo mkdir /var/www
-    sudo mount -t nfs -o rw, nosuid <NFS-Server-IP>:/mnt/apps /var/www
+    sudo mount -t nfs -o rw,nosuid <NFS-Server-IP>:/mnt/apps /var/www
     ```
     Results:
     ![image](img/mkdir2.png)
